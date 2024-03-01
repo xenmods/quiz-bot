@@ -7,13 +7,13 @@ class Users(BASE):
 
     user_id = Column(Integer, primary_key=True)
     username = Column(UnicodeText)
-    wins = Column(Integer, default=0)
+    score = Column(Integer, default=0)
     played = Column(Integer, default=0)
     
     def __init__(self, user_id, username):
         self.user_id = user_id
         self.username = username
-        self.wins = 0
+        self.score = 0
         self.played = 0
 
     def __repr__(self):
@@ -41,6 +41,18 @@ def id_to_username(user_id):
     finally:
         SESSION.close()
 
+def add_score(user_id, score):
+    try:
+        user = SESSION.query(Users).get(user_id)
+        if user:
+            user.score += score
+            user.played += 1
+            SESSION.commit()
+    finally:
+        SESSION.close()
+
+def get_top_users():
+    return SESSION.query(Users).order_by(Users.score.desc()).limit(10).all()
 
 def get_user(user_id):
     return SESSION.query(Users).get(user_id)
