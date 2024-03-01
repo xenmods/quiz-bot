@@ -32,6 +32,10 @@ async def quiz(_, message: Message):
         return await message.reply_text("You must specify the number of questions.")
     ACTIVE_QUIZZES[message.chat.id] = {"users": [], "questions": [], "current_question": {}, "started": False, "last_question_time": 0}
     add_chat(message.chat.id)
+    try:
+        await bot.send_reaction(message.chat.id, message.id, "👍")
+    except:
+        pass
     await message.reply_text("Quiz started! Send /endquiz to end the quiz.")
     xx = await bot.send_message(message.chat.id, "Starting quiz in 5️⃣ seconds...")
     await asyncio.sleep(1)
@@ -89,7 +93,12 @@ async def quiz(_, message: Message):
         y += 1
 
     text += "\n**🏆 Thanks for participating!**"
-    await bot.send_message(message.chat.id, text, reply_markup=Markup([[Button("Quiz Bot", url="iacquizbot.t.me")]]))
+    msg = await bot.send_message(message.chat.id, text, reply_markup=Markup([[Button("Quiz Bot", url="iacquizbot.t.me")]]))
+    try:
+        await msg.pin()
+        await bot.send_reaction(message.chat.id, msg.id, "🎉")
+    except:
+        pass
     del ACTIVE_QUIZZES[message.chat.id]
 
 
@@ -141,6 +150,6 @@ async def top(_, message: Message):
     get_prefix = lambda x: "🥇" if x == 0 else "🥈" if x == 1 else "🥉" if x == 2 else f"{x + 1}."
     y = 0
     for user in users:
-        text += f"{get_prefix(y)} @{user.username}: **{user.score}** points\n"
+        text += f"{get_prefix(y)} @{user.username}: **{user.score}** correctly answered (**{user.played} games**)\n"
         y += 1
     await message.reply_text(text, reply_markup=Markup([[Button("Quiz Bot", url="t.me/iacquizbot")]]))
