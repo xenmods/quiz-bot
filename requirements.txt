@@ -1,0 +1,7 @@
+git+https://github.com/KurimuzonAkuma/pyrogram.git@v2.1.13
+sqlalchemy==1.3.23
+psycopg2-binary
+feedparser
+tgcrypto
+uvloop
+dotenv
